@@ -1,0 +1,16 @@
+<?php
+
+function contact_form_menu() {
+  $items = array();
+
+  $items['contact-us'] = array(
+    'title' => "Contact Us!",
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('contact_us_form'),
+    'access arguments' => array('access content'),
+    'file' => 'contact_form.us.inc',
+    'weight' => 1,
+  );
+
+  return $items;
+}
