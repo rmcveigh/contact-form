@@ -54,7 +54,6 @@ function contact_us_form($form, &$form_state) {
       'placeholder' => t('Message Body'),
     ),
   );
-
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Submit'),
