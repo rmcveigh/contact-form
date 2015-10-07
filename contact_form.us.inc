@@ -60,7 +60,7 @@ function contact_us_form($form, &$form_state) {
     '#value' => t('Submit'),
   );
   $form['#attached']['js'] = array(
-    drupal_get_path('module', 'contact_form') . '/contact-form.min.js',
+    drupal_get_path('module', 'contact_form') . '/js/contact-form.min.js',
   );
 
   return $form;
