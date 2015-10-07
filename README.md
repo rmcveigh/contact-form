@@ -1,5 +1,3 @@
-# contact-form
-
 CONTENTS OF THIS FILE
 ---------------------  
  * Introduction
