@@ -61,6 +61,7 @@
         var booleonTest = 0;
         var elementValue = $thisElement.val();
         var split = elementValue.split(' ');
+
         for(var i = 0; i < split.length; i++) {
           var word= split[i].replace(/\s+/, '');
           var ssnVal = ssnCheck(word);
@@ -69,6 +70,7 @@
             break;
           }
         }
+        // If it passes validation send the user a warning.
         if (booleonTest === 1) {
           $thisElement.addClass('error');
           $('#edit-submit').attr('disabled', 'disabled');
@@ -93,6 +95,7 @@
         var booleonTest = 0;
         var elementValue = $thisElement.val();
         var split = elementValue.split(' ');
+
         for(var i = 0; i < split.length; i++) {
           var word= split[i].replace(/\s+/, '');
           var ccVal = ccCheck(word);
@@ -101,6 +104,7 @@
             break;
           }
         }
+        // If it passes validation send the user a warning.
         if (booleonTest === 1) {
           $thisElement.addClass('error');
           $('#edit-submit').attr('disabled', 'disabled');
@@ -124,6 +128,7 @@
         var $errorText = $thisParent.find('.email-error-message');
         var email = $thisElement.val();
         var emailValue = checkEmail(email);
+        // If it does not pass validation send the user a warning.
         if (emailValue !== true) {
           $thisElement.addClass('error');
           $('#edit-submit').attr('disabled', 'disabled');
@@ -139,7 +144,8 @@
         }
       }
 
-      // Validating all text areas and text inputs on contact form when changed.
+      // Validating all text areas and text inputs except the email on the contact
+      // form when the values are changed.
       $('#contact-us-form textarea, #contact-us-form input[type="text"]').not('#edit-contact-info-email')
       .change(function() {
         $(this).ssnValidate();
@@ -153,7 +159,6 @@
 
     }
   };
-
 
 })(jQuery, Drupal, this, this.document);
 
