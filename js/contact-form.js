@@ -18,23 +18,15 @@
     attach: function (context, settings) { // jshint ignore:line
 
       // Validator for social security numbers
-      function ssnCheck(word) {
+      function stringCheck(word) {
         var elementValue = word;
         var ssnPattern = /^\d{3}-?\d{2}-?\d{4}$/;
-        if (elementValue.match(ssnPattern)) {
-          return true;
-        }
-        else {
-          return false;
-        }
-      }
-
-      // Validator for credit card numbers
-      function ccCheck(word) {
-        var elementValue = word;
         var ccPattern = '^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35d{3})d{11})$';
-        if (elementValue.match(ccPattern)) {
-          return true;
+        if (elementValue.match(ssnPattern)) {
+          return 'ssn';
+        }
+        else if (elementValue.match(ccPattern)) {
+          return 'ccn';
         }
         else {
           return false;
@@ -52,72 +44,75 @@
           }
       }
 
+      // This jQuery function add error attr
+      // Had to parse this out sense it effects the same elements
+      $.fn.addError = function() {
+        var $thisElement = $(this);
+        var $error = $thisElement.parent().find('.error-msg');
+        var $dis = $('#edit-submit:disabled');
+        if (!$thisElement.hasClass('error')) {
+          $thisElement.addClass('error');
+        }
+        if ($error.length && !$dis.length) {
+          $('#edit-submit').attr('disabled', 'disabled');
+        }
+      };
 
-      // This jQuery function checks for a social security number in the field.
-      $.fn.ssnValidate = function () {
+      // This jQuery function removes error attr
+      // Had to parse this out sense it effects the same elements
+
+      $.fn.removeError = function() {
+        var $thisElement = $(this);
+        var $error = $thisElement.parent().find('.error-msg');
+        var $dis = $('#edit-submit:disabled');
+        if ($thisElement.hasClass('error')) {
+          $thisElement.removeClass('error');
+        }
+        if (!$error.length && $dis.length) {
+          $('#edit-submit').removeAttr('disabled')
+        }
+      };
+
+      // This jQuery function checks for a social security and credit card number in the field.
+      $.fn.validate = function () {
         var $thisElement = $(this);
         var $thisParent = $thisElement.parent();
-        var $errorText = $thisParent.find('.ssn-error-message');
-        var booleonTest = 0;
+        var $ssnError = $thisParent.find('.ssn-error-message');
+        var $ccnError = $thisParent.find('.cc-error-message');
+        var ssnTest = 0;
+        var ccnTest = 0;
         var elementValue = $thisElement.val();
         var split = elementValue.split(' ');
-
+        // Loop through each word in value and run validation functions.
+        // Need to loop through each word so no break in loop.
         for(var i = 0; i < split.length; i++) {
           var word= split[i].replace(/\s+/, '');
-          var ssnVal = ssnCheck(word);
-          if (ssnVal === true) {
-            booleonTest = 1;
-            break;
+          var ccVal = stringCheck(word);
+          var ssnVal = stringCheck(word);
+          if (ssnVal === 'ssn') {
+            ssnTest = 1;
+          }
+          else if (ccVal === 'ccn') {
+            ccnTest = 1;
           }
         }
-        // If it passes validation send the user a warning.
-        if (booleonTest === 1) {
-          $thisElement.addClass('error');
-          $('#edit-submit').attr('disabled', 'disabled');
-          if (!$errorText.length) {
-            $thisParent.append('<p style="color: red;" class="ssn-error-message">Please remove the 9 digit social security number.<p>');
-          }
+        // If ccn is present show warning.
+        if (ccnTest === 1 && !$ccnError.length) {
+          $thisParent.append('<p style="color: red;" class="cc-error-message error-msg">Please remove the credit card number.<p>');
+          $thisElement.addError();
         }
-        else {
-          $thisElement.removeClass('error');
-          $('#edit-submit').removeAttr('disabled');
-          if ($errorText.length) {
-            $errorText.remove();
-          }
+        else if (ccnTest !== 1 && $ccnError.length) {
+          $ccnError.remove();
+          $thisElement.removeError();
         }
-      }
-
-      // This jQuery function checks for a social security number in the field.
-      $.fn.ccValidate = function () {
-        var $thisElement = $(this);
-        var $thisParent = $thisElement.parent();
-        var $errorText = $thisParent.find('.cc-error-message');
-        var booleonTest = 0;
-        var elementValue = $thisElement.val();
-        var split = elementValue.split(' ');
-
-        for(var i = 0; i < split.length; i++) {
-          var word= split[i].replace(/\s+/, '');
-          var ccVal = ccCheck(word);
-          if (ccVal === true) {
-            booleonTest = 1;
-            break;
-          }
+        // If ssn is present show warning.
+        if (ssnTest === 1 && !$ssnError.length) {
+          $thisParent.append('<p style="color: red;" class="ssn-error-message error-msg">Please remove the 9 digit social security number.<p>');
+          $thisElement.addError();
         }
-        // If it passes validation send the user a warning.
-        if (booleonTest === 1) {
-          $thisElement.addClass('error');
-          $('#edit-submit').attr('disabled', 'disabled');
-          if (!$errorText.length) {
-            $thisParent.append('<p style="color: red;" class="cc-error-message">Please remove the credit card number.<p>');
-          }
-        }
-        else {
-          $thisElement.removeClass('error');
-          $('#edit-submit').removeAttr('disabled');
-          if ($errorText.length) {
-            $errorText.remove();
-          }
+        else if (ssnTest !== 1 && $ssnError.length) {
+          $ssnError.remove();
+          $thisElement.removeError();
         }
       }
 
@@ -146,10 +141,10 @@
 
       // Validating all text areas and text inputs except the email on the contact
       // form when the values are changed.
-      $('#contact-us-form textarea, #contact-us-form input[type="text"]').not('#edit-contact-info-email')
+      $('#contact-us-form textarea, #contact-us-form input[type="text"]')
+      .not('#edit-contact-info-email')
       .change(function() {
-        $(this).ssnValidate();
-        $(this).ccValidate();
+        $(this).validate();
       });
 
       // Validate the email text area when changed
