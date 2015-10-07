@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Create form.
+ * Create contact us form.
  */
 function contact_us_form($form, &$form_state) {
   $form['#tree'] = TRUE;
@@ -97,6 +97,7 @@ function contact_us_form_validate(&$form, &$form_state) {
 
 /**
  * Implements hook_form_submit().
+ * We just set a success message on the page if the form successfully submits.
  */
 function contact_us_form_submit(&$form, &$form_state) {
   drupal_set_message(
@@ -104,7 +105,10 @@ function contact_us_form_submit(&$form, &$form_state) {
   );
 }
 
-
+/**
+ * This function will create an array of words from the input's value then
+ * run the check_for_ccn function on each word.
+ */
 function check_for_credit_info($val) {
   $words = explode(' ', $val);
   $returnboolean = 0;
@@ -116,6 +120,10 @@ function check_for_credit_info($val) {
   return $returnboolean;
 }
 
+/**
+ * This function will create an array of words fromt the input's value then
+ * run the check_for_ssn function on each word.
+ */
 function check_for_ss_number($val) {
   $words = explode(' ', $val);
   $returnboolean = 0;
@@ -128,9 +136,9 @@ function check_for_ss_number($val) {
 }
 
 /**
- * this will check the string as long as its at least 15 digits long against the
+ * This will check the string as long as its at least 15 digits long against the
  * first 15 and (perhaps 16) digits against the luhn check.
- * if we get one positive, we $returnboolean indicating that
+ * If we get one positive, we $returnboolean indicating that
  */
 
 function check_for_ccn($word) {
@@ -155,9 +163,8 @@ function check_for_ccn($word) {
 }
 
 /**
- * this will check the string as long as its at least 8 digits long against the
- * first 8 and (perhaps 9) digits against the luhn check.
- * if we get one positive, we $returnboolean indicating that
+ * This will check the string as long as 9 digits.
+ * If we get one positive, we $returnboolean indicating that
  */
 
 function check_for_ssn($word) {

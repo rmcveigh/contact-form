@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Implements hook_menu().
+ * Creates the contact us page and imports the proper .inc file.
+ */
 function contact_form_menu() {
   $items = array();
 
