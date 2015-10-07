@@ -152,6 +152,8 @@ function check_for_ccn($word) {
     settype($val, 'string');
 
     while (strlen($val) >= 16) {
+      // The luhn_check with verify that the numbers equate to a valid credit
+      // card number using the luhn algorithm.
       if (luhn_check($val)) {
         $returnboolean = 1;
       }
